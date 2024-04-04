@@ -657,6 +657,7 @@ if __name__ == "__main__":
 
     sys.excepthook = excepthook
 
+
     try:
         app = QtWidgets.QApplication(sys.argv)
         MainWindow = QtWidgets.QMainWindow()
