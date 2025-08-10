@@ -1107,7 +1107,7 @@ class Ui_MainWindow(object):
                     continue
 
                 if "Р" in splittedLine[0]:
-                    valueOfRCurrent.append(splittedLine[7])
+                    valueOfRCurrent.append(splittedLine[8])
                     if len(namesForColumns) != 0:
                         numberOfCols = len(namesForColumns)
                         BLOCK_SIZE = numberOfCols * 2 + 3
