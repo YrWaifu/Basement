@@ -79,7 +79,7 @@ class Ui_MainWindow(object):
         self.ButtonGetBD.clicked.connect(self.buttonPressedGetBD)
 
         self.ButtonExpressAnal = QtWidgets.QPushButton(self.TenzoTab)
-        self.ButtonExpressAnal.setGeometry(QtCore.QRect(110, 180, 105, 23))
+        self.ButtonExpressAnal.setGeometry(QtCore.QRect(100, 180, 125, 23))
         self.ButtonExpressAnal.setObjectName("ButtonExpressAnal")
         self.ButtonExpressAnal.clicked.connect(self.buttonPressedExpressAnal)
         fontButton = QFont()
@@ -134,6 +134,23 @@ class Ui_MainWindow(object):
         self.VybroTab = QtWidgets.QWidget()
         self.VybroTab.setObjectName("VybroTab")
         self.tabWidget.addTab(self.VybroTab, "")
+
+        self.AboutTab = QtWidgets.QWidget()
+        self.AboutTab.setObjectName("AboutTab")
+        self.tabWidget.addTab(self.AboutTab, "")
+
+        self.Header3Label = QtWidgets.QLabel(self.AboutTab)
+        self.Header3Label.setGeometry(QtCore.QRect(10, 10, 301, 31))
+        self.Header3Label.setObjectName("HeaderLabel")
+        self.Header3Label.setPixmap(pixmap)
+        self.Header3Label.setScaledContents(True)
+
+        self.InfoTextEdit = QtWidgets.QTextEdit(self.AboutTab)
+        self.InfoTextEdit.setGeometry(QtCore.QRect(10, 50, 301, 150))
+        self.InfoTextEdit.setReadOnly(True)
+        self.InfoTextEdit.setFrameStyle(QtWidgets.QFrame.NoFrame)
+        self.InfoTextEdit.setStyleSheet("background-color: transparent;")
+        self.InfoTextEdit.setObjectName("InfoTextEdit")
 
         self.Header2Label = QtWidgets.QLabel(self.VybroTab)
         self.Header2Label.setGeometry(QtCore.QRect(10, 10, 301, 31))
@@ -216,6 +233,14 @@ class Ui_MainWindow(object):
 
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.TenzoTab), _translate("MainWindow", "Тензометрия"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.VybroTab), _translate("MainWindow", "Полосовой анализ"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.AboutTab), _translate("MainWindow", "Инфо"))
+
+        self.InfoTextEdit.setText(_translate("MainWindow",
+            "Предложения и ошибки отправлять на почту:\n"
+            "olga.titkovaa.a@gmail.com\n\n"
+            "Поддержать разработчика:\n"
+            "По номеру телефона (СБП):\n"
+            "+7 (916) 426-33-29 (Т Банк)"))
 
     def fillCell(self, value, row, column):
         double = Side(border_style="thin", color="000000")
@@ -245,6 +270,18 @@ class Ui_MainWindow(object):
 
     def workWithMax(self, numberOfLines, startOffset, columnOffset, checkToKZ, maximumOfColumn1, maximumOfColumn2, maximumOfColumn3, maximumOfColumnKZ):
         sdvigY = 1
+
+        targetMax1 = maximumOfColumn1
+        targetMax2 = maximumOfColumn2
+        targetMax3 = maximumOfColumn3
+        targetMaxKZ = maximumOfColumnKZ
+
+        if checkToKZ:
+            targetMax1 = maximumOfColumnKZ
+            targetMax2 = maximumOfColumn1
+            targetMax3 = maximumOfColumn2
+            targetMaxKZ = maximumOfColumn3
+
         for row_num in range(2, numberOfLines + 2):
             value1 = self.sheet.cell(row=row_num, column=startOffset + columnOffset + 1).value
             value2 = self.sheet.cell(row=row_num, column=startOffset + columnOffset + 2).value
@@ -252,32 +289,32 @@ class Ui_MainWindow(object):
             valueKZ = self.sheet.cell(row=row_num,
                                       column=startOffset + columnOffset + 4).value if checkToKZ else None
 
-            if value1 == maximumOfColumn1:
+            if value1 == targetMax1:
                 self.sheet.cell(row=row_num,
                                 column=startOffset + columnOffset + 1).font = openpyxl.styles.Font(
                     bold=True, name="Times New Roman", size=12)
 
-            if value2 == maximumOfColumn2:
+            if value2 == targetMax2:
                 self.sheet.cell(row=row_num,
                                 column=startOffset + columnOffset + 2).font = openpyxl.styles.Font(
                     bold=True, name="Times New Roman", size=12)
 
-            if value3 == maximumOfColumn3:
+            if value3 == targetMax3:
                 self.sheet.cell(row=row_num,
                                 column=startOffset + columnOffset + 3).font = openpyxl.styles.Font(
                     bold=True, name="Times New Roman", size=12)
 
-            if checkToKZ and valueKZ == maximumOfColumnKZ:
+            if checkToKZ and valueKZ == targetMaxKZ:
                 self.sheet.cell(row=row_num,
                                 column=startOffset + columnOffset + 4).font = openpyxl.styles.Font(
                     bold=True, name="Times New Roman", size=12)
 
-        self.fillCell(str(maximumOfColumn1), numberOfLines + 1 + sdvigY, startOffset + columnOffset + 1)
-        self.fillCell(str(maximumOfColumn2), numberOfLines + 1 + sdvigY, startOffset + columnOffset + 2)
-        self.fillCell(str(maximumOfColumn3), numberOfLines + 1 + sdvigY, startOffset + columnOffset + 3)
+        self.fillCell(str(targetMax1), numberOfLines + 1 + sdvigY, startOffset + columnOffset + 1)
+        self.fillCell(str(targetMax2), numberOfLines + 1 + sdvigY, startOffset + columnOffset + 2)
+        self.fillCell(str(targetMax3), numberOfLines + 1 + sdvigY, startOffset + columnOffset + 3)
 
         if checkToKZ:
-            self.fillCell(str(maximumOfColumnKZ), numberOfLines + 1 + sdvigY, startOffset + columnOffset + 4)
+            self.fillCell(str(targetMaxKZ), numberOfLines + 1 + sdvigY, startOffset + columnOffset + 4)
 
     def makingsheetWithRules(self, path, filenameToSave=""):
 
@@ -421,30 +458,57 @@ class Ui_MainWindow(object):
 
                     if flagToWriteNames == False:
                         self.fillCell(splittedLine[0], currentRow + 1 + sdvigY, 3)
-                    # try:
-                    self.fillCell(splittedLine[4].replace(",", "."), currentRow + 1 + sdvigY, startOffset + columnOffset + 1 + sdvigX)
-                    # except:
-                    #     self.fillCell("X", currentRow + 1 + sdvigY, startOffset + columnOffset + 1 + sdvigX)
-                    try:
-                        self.fillCell(splittedLine[8].replace(",", "."), currentRow + 1 + sdvigY, startOffset + columnOffset + 2 + sdvigX)
-                    except:
-                        self.fillCell("X", currentRow + 1 + sdvigY, startOffset + columnOffset + 2 + sdvigX)
-                    try:
-                        self.fillCell(splittedLine[12].replace(",", "."), currentRow + 1 + sdvigY, startOffset + columnOffset + 3 + sdvigX)
-                    except:
-                        self.fillCell("X", currentRow + 1 + sdvigY, startOffset + columnOffset + 3 + sdvigX)
 
                     if checkToKZ:
+                        # 4 -> 1 (KZ)
                         try:
                             KZValue = splittedLine[13].replace(",", ".").replace(u'\xa0', "") if abs(
-                            float(splittedLine[13].replace(",", ".").replace(u'\xa0', ""))) > abs(
-                            float(splittedLine[15].replace(",", ".").replace(u'\xa0', ""))) else \
-                            splittedLine[15].replace(",", ".").replace(u'\xa0', "")
+                                float(splittedLine[13].replace(",", ".").replace(u'\xa0', ""))) > abs(
+                                float(splittedLine[15].replace(",", ".").replace(u'\xa0', ""))) else \
+                                splittedLine[15].replace(",", ".").replace(u'\xa0', "")
                             if checkToMAX:
-                                maximumOfColumnKZ = maximumOfColumnKZ if abs(maximumOfColumnKZ) > abs(float(KZValue)) else float(KZValue)
-                            self.fillCell(KZValue, currentRow + 1 + sdvigY, startOffset + columnOffset + 4 + sdvigX)
+                                maximumOfColumnKZ = maximumOfColumnKZ if abs(maximumOfColumnKZ) > abs(
+                                    float(KZValue)) else float(KZValue)
+                            self.fillCell(KZValue, currentRow + 1 + sdvigY, startOffset + columnOffset + 1 + sdvigX)
+                        except:
+                            self.fillCell("X", currentRow + 1 + sdvigY, startOffset + columnOffset + 1 + sdvigX)
+
+                        # 1 -> 2
+                        try:
+                            self.fillCell(splittedLine[4].replace(",", "."), currentRow + 1 + sdvigY,
+                                          startOffset + columnOffset + 2 + sdvigX)
+                        except:
+                            self.fillCell("X", currentRow + 1 + sdvigY, startOffset + columnOffset + 2 + sdvigX)
+
+                        # 2 -> 3
+                        try:
+                            self.fillCell(splittedLine[8].replace(",", "."), currentRow + 1 + sdvigY,
+                                          startOffset + columnOffset + 3 + sdvigX)
+                        except:
+                            self.fillCell("X", currentRow + 1 + sdvigY, startOffset + columnOffset + 3 + sdvigX)
+
+                        # 3 -> 4
+                        try:
+                            self.fillCell(splittedLine[12].replace(",", "."), currentRow + 1 + sdvigY,
+                                          startOffset + columnOffset + 4 + sdvigX)
                         except:
                             self.fillCell("X", currentRow + 1 + sdvigY, startOffset + columnOffset + 4 + sdvigX)
+
+                    else:
+                        try:
+                            self.fillCell(splittedLine[4].replace(",", "."), currentRow + 1 + sdvigY, startOffset + columnOffset + 1 + sdvigX)
+                        except:
+                            self.fillCell("X", currentRow + 1 + sdvigY, startOffset + columnOffset + 1 + sdvigX)
+                        try:
+                            self.fillCell(splittedLine[8].replace(",", "."), currentRow + 1 + sdvigY, startOffset + columnOffset + 2 + sdvigX)
+                        except:
+                            self.fillCell("X", currentRow + 1 + sdvigY, startOffset + columnOffset + 2 + sdvigX)
+                        try:
+                            self.fillCell(splittedLine[12].replace(",", "."), currentRow + 1 + sdvigY, startOffset + columnOffset + 3 + sdvigX)
+                        except:
+                            self.fillCell("X", currentRow + 1 + sdvigY, startOffset + columnOffset + 3 + sdvigX)
+
+                        # KZ logic not needed here as checkToKZ is false
 
             currentRow += 1
 

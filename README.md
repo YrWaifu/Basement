@@ -26,11 +26,7 @@ py main.py
 ### Сборка в .exe (Windows, PyInstaller)
 - Сборка в один файл (.exe):
 ```powershell
-py -m PyInstaller --noconsole --onefile --name Basement --icon myicon.ico \
-  --add-data "myicon.ico;." \
-  --add-data "header.png;." \
-  --add-data "dinosaur.gif;." \
-  main.py
+py -m PyInstaller --noconsole --onefile --name Basement --icon myicon.ico --add-data "myicon.ico;." --add-data "header.png;." --add-data "dinosaur.gif;." main.py
 ```
 
 - Альтернатива (папка приложения):
