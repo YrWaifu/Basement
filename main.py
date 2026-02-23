@@ -336,7 +336,7 @@ class Ui_MainWindow(object):
 
         start_time = datetime.datetime.now()
 
-        with open(path, 'r') as file:
+        with open(path, 'r', encoding='cp1251') as file:
             lines = file.readlines()
 
         currentRow = 1
@@ -626,7 +626,7 @@ class Ui_MainWindow(object):
         workbook = openpyxl.Workbook()
         self.sheet = workbook.active
 
-        with open(self.filePath, 'r') as file:
+        with open(self.filePath, 'r', encoding='cp1251') as file:
             lines = file.readlines()
 
         currentRow = 4
@@ -831,7 +831,7 @@ class Ui_MainWindow(object):
         maximumOfColumn1 = -10000000000000; maximumOfColumn2 = -10000000000000; maximumOfColumn3 = -10000000000000; maximumOfColumnKZ = -10000000000000
         minimumOfColumn1 = 10000000000000; minimumOfColumn2 = 10000000000000; minimumOfColumn3 = 10000000000000; minimumOfColumnKZ = 10000000000000
 
-        with open(path, 'r') as file:
+        with open(path, 'r', encoding='cp1251') as file:
             lines = file.readlines()
 
         currentRow = 1
@@ -978,24 +978,6 @@ class Ui_MainWindow(object):
 
                     if flagToWriteNames == False:
                         self.fillCell(splittedLine[0], currentRow + 1 + sdvigY, 3)
-                    try:
-                        self.fillCell(splittedLine[4].replace(",", "."), currentRow + 1 + sdvigY,
-                                  startOffset + columnOffset + 1 + sdvigX)
-                    except:
-                        self.fillCell("X", currentRow + 1 + sdvigY,
-                                      startOffset + columnOffset + 1 + sdvigX)
-                    try:
-                        self.fillCell(splittedLine[8].replace(",", "."), currentRow + 1 + sdvigY,
-                                  startOffset + columnOffset + 2 + sdvigX)
-                    except:
-                        self.fillCell("X", currentRow + 1 + sdvigY,
-                                      startOffset + columnOffset + 2 + sdvigX)
-                    try:
-                        self.fillCell(splittedLine[12].replace(",", "."), currentRow + 1 + sdvigY,
-                                  startOffset + columnOffset + 3 + sdvigX)
-                    except:
-                        self.fillCell("X", currentRow + 1 + sdvigY,
-                                      startOffset + columnOffset + 3 + sdvigX)
 
                     if checkToKZ:
                         try:
@@ -1006,9 +988,48 @@ class Ui_MainWindow(object):
                             if checkToMAX:
                                 maximumOfColumnKZ = maximumOfColumnKZ if maximumOfColumnKZ > float(KZValue) else float(KZValue)
                                 minimumOfColumnKZ = minimumOfColumnKZ if minimumOfColumnKZ < float(KZValue) else float(KZValue)
-                            self.fillCell(KZValue, currentRow + 1 + sdvigY, startOffset + columnOffset + 4 + sdvigX)
+                            self.fillCell(KZValue, currentRow + 1 + sdvigY, startOffset + columnOffset + 1 + sdvigX)
                         except:
-                            self.fillCell("X", currentRow + 1 + sdvigY, startOffset + columnOffset + 4 + sdvigX)
+                            self.fillCell("X", currentRow + 1 + sdvigY, startOffset + columnOffset + 1 + sdvigX)
+
+                        try:
+                            self.fillCell(splittedLine[4].replace(",", "."), currentRow + 1 + sdvigY,
+                                          startOffset + columnOffset + 2 + sdvigX)
+                        except:
+                            self.fillCell("X", currentRow + 1 + sdvigY,
+                                          startOffset + columnOffset + 2 + sdvigX)
+                        try:
+                            self.fillCell(splittedLine[8].replace(",", "."), currentRow + 1 + sdvigY,
+                                          startOffset + columnOffset + 3 + sdvigX)
+                        except:
+                            self.fillCell("X", currentRow + 1 + sdvigY,
+                                          startOffset + columnOffset + 3 + sdvigX)
+                        try:
+                            self.fillCell(splittedLine[12].replace(",", "."), currentRow + 1 + sdvigY,
+                                          startOffset + columnOffset + 4 + sdvigX)
+                        except:
+                            self.fillCell("X", currentRow + 1 + sdvigY,
+                                          startOffset + columnOffset + 4 + sdvigX)
+
+                    else:
+                        try:
+                            self.fillCell(splittedLine[4].replace(",", "."), currentRow + 1 + sdvigY,
+                                          startOffset + columnOffset + 1 + sdvigX)
+                        except:
+                            self.fillCell("X", currentRow + 1 + sdvigY,
+                                          startOffset + columnOffset + 1 + sdvigX)
+                        try:
+                            self.fillCell(splittedLine[8].replace(",", "."), currentRow + 1 + sdvigY,
+                                          startOffset + columnOffset + 2 + sdvigX)
+                        except:
+                            self.fillCell("X", currentRow + 1 + sdvigY,
+                                          startOffset + columnOffset + 2 + sdvigX)
+                        try:
+                            self.fillCell(splittedLine[12].replace(",", "."), currentRow + 1 + sdvigY,
+                                          startOffset + columnOffset + 3 + sdvigX)
+                        except:
+                            self.fillCell("X", currentRow + 1 + sdvigY,
+                                          startOffset + columnOffset + 3 + sdvigX)
 
             currentRow += 1
 
@@ -1028,16 +1049,28 @@ class Ui_MainWindow(object):
     def workWithMinAndMaxBD(self, numberOfLines, startOffset, columnOffset, checkToKZ, maximumOfColumn1, maximumOfColumn2,
                     maximumOfColumn3, maximumOfColumnKZ, min):
         sdvigY = 1
+
+        target1 = maximumOfColumn1
+        target2 = maximumOfColumn2
+        target3 = maximumOfColumn3
+        targetKZ = maximumOfColumnKZ
+
+        if checkToKZ:
+            target1 = maximumOfColumnKZ
+            target2 = maximumOfColumn1
+            target3 = maximumOfColumn2
+            targetKZ = maximumOfColumn3
+
         if min == 0:
-            self.fillCell(str(maximumOfColumn1), numberOfLines + 1 + sdvigY, startOffset + columnOffset + 1)
-            self.fillCell(str(maximumOfColumn2), numberOfLines + 1 + sdvigY, startOffset + columnOffset + 2)
-            self.fillCell(str(maximumOfColumn3), numberOfLines + 1 + sdvigY, startOffset + columnOffset + 3)
-            self.fillCell(str(maximumOfColumnKZ), numberOfLines + 1 + sdvigY, startOffset + columnOffset + 4)
+            self.fillCell(str(target1), numberOfLines + 1 + sdvigY, startOffset + columnOffset + 1)
+            self.fillCell(str(target2), numberOfLines + 1 + sdvigY, startOffset + columnOffset + 2)
+            self.fillCell(str(target3), numberOfLines + 1 + sdvigY, startOffset + columnOffset + 3)
+            self.fillCell(str(targetKZ), numberOfLines + 1 + sdvigY, startOffset + columnOffset + 4)
         else:
-            self.fillCell(str(maximumOfColumn1), numberOfLines + 2 + sdvigY, startOffset + columnOffset + 1)
-            self.fillCell(str(maximumOfColumn2), numberOfLines + 2 + sdvigY, startOffset + columnOffset + 2)
-            self.fillCell(str(maximumOfColumn3), numberOfLines + 2 + sdvigY, startOffset + columnOffset + 3)
-            self.fillCell(str(maximumOfColumnKZ), numberOfLines + 2 + sdvigY, startOffset + columnOffset + 4)
+            self.fillCell(str(target1), numberOfLines + 2 + sdvigY, startOffset + columnOffset + 1)
+            self.fillCell(str(target2), numberOfLines + 2 + sdvigY, startOffset + columnOffset + 2)
+            self.fillCell(str(target3), numberOfLines + 2 + sdvigY, startOffset + columnOffset + 3)
+            self.fillCell(str(targetKZ), numberOfLines + 2 + sdvigY, startOffset + columnOffset + 4)
 
     def getIconPath(self):
         if getattr(sys, 'frozen', False):
